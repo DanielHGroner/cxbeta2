@@ -1,0 +1,20 @@
+  /* Style for elements that can be hilited */
+  .cx-hilitable {
+    /* background-color: #eee; */
+    cursor: pointer;
+  }
+  
+  /* Style for highlighted elements */
+  .cx-hilited {
+    background-color: yellow;  /* Change this for your desired highlight color */
+  }
+  /* style for mapped-to hilited2 elements */
+  .cx-hilited2 {
+    background-color: #FFE4B5;  /* Change this for your desired highlight color */
+  }
+  
+  /* style for mapped-to hilited3 elements */
+  .cx-hilited3 {
+    background-color: lightyellow;  /* Change this for your desired highlight color */
+  }
+    

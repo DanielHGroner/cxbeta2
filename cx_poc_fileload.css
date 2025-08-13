@@ -1,0 +1,121 @@
+/* cx_poc_fileload.css */
+
+body {
+  font-family: sans-serif;
+  margin: 1em;
+}
+
+textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.menu-bar {
+  margin-bottom: 1em;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-box {
+  background: white;
+  padding: 1em;
+  border-radius: 5px;
+  width: 600px;
+  max-height: 80vh;
+  display: none;
+  flex-direction: column;
+}
+
+.repo-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.repo-entry-row label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.column-container {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  max-height: 300px;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  padding: 0.5em;
+}
+
+.cx-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  border-right: 1px solid #ccc;
+  padding-right: 0.5em;
+  margin-right: 0.5em;
+}
+
+.cx-entry {
+  padding: 0.25em;
+  cursor: pointer;
+}
+
+.cx-entry.selected {
+  background-color: #cce5ff;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5em;
+}
+
+.error-label {
+  color: red;
+  margin-bottom: 0.5em;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  padding: 0.5em 1em;
+  font-size: 1rem;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  flex-direction: column;
+}
+
+.dropdown-content button {
+  padding: 0.5em;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+}
+
+.dropdown:hover .dropdown-content {
+  display: flex;
+}

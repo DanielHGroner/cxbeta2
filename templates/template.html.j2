@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>{{ title }}</title>
+{% for css_file in css_files %}
+<link rel="stylesheet" href="{{ css_file }}" />
+{% endfor %}
+</head>
+<body>
+<section class="left">
+<div class="linenums-and-code">
+<div id="line-numbers-container"></div>
+<pre><code id="code">{{ code_panel|safe }}</code></pre>
+</div>
+</section>
+
+<section class="right">
+<div id="variable-panel"></div>
+<div id="io-panel"></div>
+</section>
+
+{% for js_file in js_files %}
+<script src="{{ js_file }}"></script>
+{% endfor %}
+</body>
+</html>

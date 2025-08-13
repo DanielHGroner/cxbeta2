@@ -1,0 +1,23 @@
+#help-container {
+    position: absolute;
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-width: 400px;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    z-index: 1000; /* Ensure the help container is above other elements */
+  }
+  
+  .help-span {
+    cursor: pointer;
+    /* color: #007bff;*/
+    /*text-decoration: underline;*/
+  }
+  
+  .help-span:hover {
+    color: #0056b3;
+  }
+  

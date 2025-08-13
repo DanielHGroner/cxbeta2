@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cx File Load</title>
+  <link rel="stylesheet" href="cx_poc_fileload.css" />
+</head>
+<body>
+  <textarea id="codeDisplay" rows="10" cols="80" placeholder="Code will appear here..."></textarea>
+  <div class="menu-bar">
+    <div class="dropdown">
+      <button class="dropbtn">File</button>
+      <div class="dropdown-content">
+        <button onclick="document.getElementById('fileInput').click()">Load file...</button>
+        <button onclick="githubLoader.openDialog()">Load from GitHub...</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="fileInput" style="display:none" onchange="handleFile(event)" />
+
+  <div id="githubOverlay" class="overlay">
+    <div id="githubDialog" class="dialog-box">
+      <h3>Choose file from GitHub</h3>
+      <div class="repo-entry-row">
+        <label for="repoInput">user/repo:</label>
+        <input type="text" id="repoInput" placeholder="username/reponame" />
+      </div>
+      <div id="repoErrorLabel" class="error-label"></div>
+      <div id="columns" class="column-container"></div>
+      <div class="dialog-actions">
+        <button onclick="githubLoader.closeDialog(false)">Cancel</button>
+        <button onclick="githubLoader.closeDialog(true)">Open</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cx_poc_fileload.js"></script>
+  <script>
+    function handleFile(event) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById("codeDisplay").value = e.target.result;
+      };
+      reader.readAsText(event.target.files[0]);
+    }
+  </script>
+</body>
+</html>

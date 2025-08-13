@@ -1,0 +1,164 @@
+<!-- cx_chk_gen.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CodeXplorer – Code Editor</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 400px; font-family: monospace; }
+    button { margin-top: 10px; }
+    #status { font-weight: bold; margin-top: 10px; }
+    #errors { color: red; white-space: pre-wrap; margin-top: 10px; }
+    .cx-code-container {
+      margin-left: 50px; /* aligns with left margin in visualizer for arrows */
+      max-width: 1000px;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    h4 {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+    #controls {margin-left: 50px;}
+  </style>
+  <link rel="stylesheet" href="static/css/cxlayout.css">
+  <script defer src="static/js/cxghurl.js"></script>
+</head>
+<body>
+  <h4 style="text-align:left;margin-left: 50px;">CodeXplorer – Source Code Entry</h4>
+  <div class="cx-code-container">
+     <textarea id="codeInput" data-role="code" placeholder="Enter Python code here..."></textarea><br>
+  </div>
+  <div id="controls">
+     <button id="loadFileBtn">📂 Load File</button>
+     <button onclick="visualizeCode()">🪄 Visualize</button>
+     <input id="fileInput" type="file" style="display: none">  
+     <div id="status" data-role="status"></div>
+     <div id="errors"></div>
+   </div>
+    <footer id="footer">
+        <span id="logo">Code<span style="color:green"><i>Xplorer</i></span></span>
+        <span id="copyright">(c) 2025 Rose River Software, LLC</span> &nbsp;&nbsp;&nbsp;
+        <a href="static/pages/cx-terms.html" target="_blank" title="display Terms of Use for CodeXplorer">Terms of Use</a>&nbsp;&nbsp;&nbsp;
+        <a href="static/docs/cx-help.pdf" target="_blank" title="display Overview for CodeXplorer">Overview</a>
+    </footer>
+
+<script>
+let lastGenerationSuccessful = false;
+
+document.getElementById("codeInput").addEventListener("keyup", () => {
+  if (lastGenerationSuccessful) {
+    document.getElementById("status").textContent = "";
+    document.getElementById("errors").textContent = "";
+    lastGenerationSuccessful = false;
+  }
+});
+
+async function visualizeIfValid(code, auto = false) {
+  const statusDiv = document.getElementById("status");
+  const errorsDiv = document.getElementById("errors");
+
+  sessionStorage.setItem('cxSourceCode', code);
+
+  statusDiv.textContent = "Checking...";
+  errorsDiv.textContent = "";
+
+  try {
+    const checkResp = await fetch("/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const checkResult = await checkResp.json();
+
+    if (!checkResult.valid) {
+      statusDiv.textContent = "❌ Errors";
+      checkResult.errors.forEach(err => {
+        const lineInfo = err.line !== null ? `Line ${err.line}: ` : "";
+        errorsDiv.textContent += lineInfo + err.message + "\n";
+      });
+      return;
+    }
+  } catch (err) {
+    statusDiv.textContent = "❌ Request failed";
+    errorsDiv.textContent = err.toString();
+    return;
+  }
+
+  try {
+    statusDiv.textContent = "🧠 Generating for Visualizer...";
+    errorsDiv.textContent = "";
+
+    const form = new FormData();
+    form.append("code", code);
+
+    const genResp = await fetch("/render_visualizer", {
+      method: "POST",
+      body: form
+    });
+
+    if (!genResp.ok) {
+      const errorText = await genResp.text();
+      statusDiv.textContent = "❌ Generator error";
+      errorsDiv.textContent = errorText || "Unknown error";
+      return;
+    }
+
+    const html = await genResp.text();
+    statusDiv.textContent = "✅ Generated for Visualizer.";
+    lastGenerationSuccessful = true;
+
+    document.open();
+    document.write(html);
+    document.close();
+
+  } catch (err) {
+    statusDiv.textContent = "❌ Request failed";
+    errorsDiv.textContent = err.toString();
+  }
+}
+
+function visualizeCode() {
+  const code = document.getElementById("codeInput").value;
+  visualizeIfValid(code, false);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('entering window.addEventListener("DOMContentLoaded", () =>');
+  const savedCode = sessionStorage.getItem('cxSourceCode');
+  if (savedCode != null) {
+    document.getElementById('codeInput').value = savedCode;
+  }
+});
+
+window.addEventListener('ghCodeLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('toviz') === 'true') {
+    const code = document.querySelector('[data-role="code"]').value;
+    if (code.trim().length > 0) {
+      visualizeIfValid(code, true);
+    }
+  }
+});
+
+document.getElementById('loadFileBtn').onclick = () => {
+  document.getElementById('fileInput').click();
+};
+
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      document.getElementById('codeInput').value = event.target.result;
+    };
+    reader.readAsText(file);
+  }
+});
+</script>
+
+</body>
+</html>

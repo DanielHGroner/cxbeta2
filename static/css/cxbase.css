@@ -1,0 +1,80 @@
+.cx-com {
+    color: hsla(184,9%,62%,.8)
+}
+.cx-key {
+    font-weight: bold;
+}
+.cx-str {
+    color: crimson; 
+}
+.cx-num {
+    color: red;
+}
+.cx-var {
+    color: blue;
+}
+.cx-fun {
+    color: purple;
+}
+.cx-sta {
+    background-color: white;
+    cursor: pointer;
+}
+
+.cx-varheading {
+    font-size:50%;
+    font-style: italic;
+    padding-bottom: 1ch;
+}
+.cx-progheading {
+    font-size:50%;
+    font-style: italic;
+}
+/*#footer { -defined in cxlayout.css
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+  font-size: 80%;
+}*/
+
+/* Styles for the buttons */
+.cx-button {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    height: 2.5em;
+    vertical-align: middle;
+  }
+
+#toggle-line-numbers-text {
+    font-size: 80%;
+}
+
+/* TODO - could define with a class, but requires change to all examples */
+td {
+    min-width: 3ch; /* support <-> in var table */
+}
+
+.ch-icon {
+    width:3%;
+    height:auto;
+    margin-right:5px;
+}
+
+.ch-icon-toc {
+    width:3%;
+    height:3%;
+    margin-right:5px;
+}
+
+.book-icon {
+    width:2.25%;
+    height:auto;
+    position:absolute;
+    left:5px;
+    top: 50%;
+    transform: translateY(-50%);
+}

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python for Data & Analytics - Explorer Menu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0 auto;
+      max-width: 800px;
+      padding: 1em;
+      background-color: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .chapter {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      margin-top: 1em;
+      font-size: 1.2em;
+      background-color: #e9ecef;
+      padding: 0.5em;
+      border-radius: 5px;
+    }
+    .chapter img {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+    }
+    .examples {
+      display: none;
+      padding-left: 2em;
+      margin-top: 0.5em;
+    }
+    .example {
+      margin: 0.3em 0;
+    }
+    .example a {
+      text-decoration: none;
+      color: #007bff;
+    }
+    .example a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <link rel="stylesheet" href="static/css/cxlayout.css">
+</head>
+<body>
+  <div style="display: flex; align-items: center; gap: 1em; margin-bottom: 1em;">
+    <img src="static/images/p4da-cover.png" alt="Book Cover" style="height: 60px; border-radius: 4px;">
+    <div>
+      <h1 style="margin: 0; font-size: 1.6em;">Python for Data &amp; Analytics</h1>
+      <div style="font-size: 1.1em; color: #555;">CodeXplorer Menu</div>
+    </div>
+  </div>
+
+  <div id="menu"></div>
+
+    <footer id="footer">
+        <span id="logo">Code<span style="color:green"><i>Xplorer</i></span></span>
+        <span id="copyright">(c) 2025 Rose River Software, LLC</span> &nbsp;&nbsp;&nbsp;
+        <a href="static/pages/cx-terms.html" target="_blank" title="display Terms of Use for CodeXplorer">Terms of Use</a>&nbsp;&nbsp;&nbsp;
+        <a href="static/docs/cx-help.pdf" target="_blank" title="display Overview for CodeXplorer">Overview</a>
+    </footer>
+
+  <script>
+    const gituser = 'PythonForDataAndAnalytics';
+    const gitproject = 'p4da-py';
+    const gitbranch = 'main';
+
+const menuData = [
+  {
+    chapter: "Chapter 2: Variables and Statements",
+    icon: "static/images/p4da-ch2-icon.png",
+    examples: [
+      {
+        name: "Program 2-5",
+        desc: "Calculate the total of two numbers",
+        path: "ch02/p4da-program-2-5.py"
+      },
+      {
+        name: "Program 2-6",
+        desc: "Calculate BMI from height and weight",
+        path: "ch02/p4da-program-2-6.py"
+      }
+    ]
+  },
+  {
+    chapter: "Chapter 3: Decisions",
+    icon: "static/images/p4da-ch3-icon.png",
+    examples: [
+      {
+        name: "Program 3-1",
+        desc: "With if, determine if a user-entered number is positive",
+        path: "ch03/p4da-program-3-1.py"
+      },
+      {
+        name: "Program 3-5",
+        desc: "With if and else, determine if a user-entered number is zero or non-zero",
+        path: "ch03/p4da-program-3-5.py"
+      },
+      {
+        name: "Program 3-6",
+        desc: "Calculate ending balance of a 1-year CD (2 rates, if/else)",
+        path: "ch03/p4da-program-3-6.py"
+      },
+      {
+        name: "Program 3-7",
+        desc: "With if/elif/else, determine if a user-entered number is positive, negative, or zero",
+        path: "ch03/p4da-program-3-7.py"
+      },
+      {
+        name: "Program 3-8",
+        desc: "Calculate ending balance of a 1-year CD (3 rates, if/elif/else)",
+        path: "ch03/p4da-program-3-8.py"
+      },
+      {
+        name: "Program 3-9",
+        desc: "Calculate ending balance of a 1-year CD (new vs. existing customers; nested if)",
+        path: "ch03/p4da-program-3-9.py"
+      },
+    ]
+  },
+  {
+    chapter: "Chapter 4: Repetition",
+    icon: "static/images/p4da-ch4-icon.png",
+    examples: [
+      {
+        name: "Program 4-1",
+        desc: "With while, generate a table of squares and cubes",
+        path: "ch04/p4da-program-4-1.py"
+      },
+      {
+        name: "Program 4-2",
+        desc: "With while, cumulate a set of user-entered numbers",
+        path: "ch04/p4da-program-4-2.py"
+      },
+      {
+        name: "Program 4-3",
+        desc: "With while, find the maximum of a set of user-entered numbers",
+        path: "ch04/p4da-program-4-3.py"
+      },
+      {
+        name: "Program 4-4",
+        desc: "With while, generate BMIs for different weights",
+        path: "ch04/p4da-program-4-4.py"
+      },
+      {
+        name: "Program 4-6",
+        desc: "With while, generate BMIs for different weights (special end value)",
+        path: "ch04/p4da-program-4-6.py"
+      },
+      {
+        name: "Program 4-8",
+        desc: "With for, generate a table of squares and cubes",
+        path: "ch04/p4da-program-4-8.py"
+      },
+    ]
+  },
+  {
+    chapter: "Chapter 5: Defining Functions",
+    icon: "static/images/p4da-ch5-icon.png",
+    examples: [
+      {
+        name: "Program 5-1",
+        desc: "Define and call a function to display a greeting",
+        path: "ch05/p4da-program-5-1.py"
+      },
+      {
+        name: "Program 5-2",
+        desc: "Define and call a function with one input and one output",
+        path: "ch05/p4da-program-5-2.py"
+      },
+      {
+        name: "Program 5-3",
+        desc: "Define and call a function with two inputs and one output",
+        path: "ch05/p4da-program-5-3.py"
+      },
+      {
+        name: "Program 5-4",
+        desc: "Define and call a function with three inputs (one passed as a constant)",
+        path: "ch05/p4da-program-5-4.py"
+      },
+      {
+        name: "Program 5-5",
+        desc: "Define and call a function with four inputs (including one named parameter)",
+        path: "ch05/p4da-program-5-5.py"
+      },
+      {
+        name: "Program 5-6",
+        desc: "Define and call a function with two outputs",
+        path: "ch05/p4da-program-5-6.py"
+      },
+    ]
+  },
+    {
+    chapter: "Chapter 6: Lists",
+    icon: "static/images/p4da-ch6-icon.png",
+    examples: [
+      {
+        name: "Program 6-1",
+        desc: "With lists, translate Air Quality Index (AQI) from number to color and concern (with for, break)",
+        path: "ch06/p4da-program-6-1.py"
+      },
+      {
+        name: "Program 6-2",
+        desc: "Build a list with user-entered values, and calculate its average",
+        path: "ch06/p4da-program-6-2.py"
+      },
+      {
+        name: "Program 6-4",
+        desc: "With for, determine the average of a list",
+        path: "ch06/p4da-program-6-4.py"
+      },
+      {
+        name: "Program 6-8",
+        desc: "Determine the number of items below/above a value",
+        path: "ch06/p4da-program-6-8.py"
+      },
+    ]
+    },
+    {
+    chapter: "Chapter 7: Reading and Writing Files",
+    icon: "static/images/p4da-ch7-icon.png",
+    examples: [
+      {
+        name: "Program 7-1",
+        desc: "Read one line from a file and display it to the screen",
+        path: "ch07/p4da-program-7-1.py"
+      },
+      {
+        name: "Program 7-2",
+        desc: "With while, read a file and echo its lines to the screen",
+        path: "ch07/p4da-program-7-2.py"
+      },
+      {
+        name: "Program 7-3",
+        desc: "Read one line from a file and display it to the screen",
+        path: "ch07/p4da-program-7-3.py"
+      },
+      {
+        name: "Program 7-4",
+        desc: "With for, read a file of numbers and calculate and display their average",
+        path: "ch07/p4da-program-7-4.py"
+      },
+      {
+        name: "Program 7-5",
+        desc: "Read a file with product information and calculate their EOQs",
+        path: "ch07/p4da-program-7-5.py"
+      },
+      {
+        name: "Program 7-7",
+        desc: "Prompt for input and write a single line to a file",
+        path: "ch07/p4da-program-7-7.py"
+      },
+    ]
+    },
+    {
+    chapter: "Chapter 8: Strings in Detail",
+    icon: "static/images/p4da-ch8-icon.png",
+    examples: [
+    ]
+    },
+    {
+    chapter: "Chapter 9: Dictionaries and Sets",
+    icon: "static/images/p4da-ch9-icon.png",
+    examples: [
+      {
+        name: "Program 9-1",
+        desc: "Build a contact dictionary dynamically from user input",
+        path: "ch09/p4da-program-9-1.py"
+      },
+      {
+        name: "Program 9-2",
+        desc: "Dictionary example to lookup phone (value) from email (key)",
+        path: "ch09/p4da-program-9-2.py"
+      },
+      {
+        name: "Program 9-3",
+        desc: "Dictionary example to lookup phone (value) from email (key); handle not found",
+        path: "ch09/p4da-program-9-3.py"
+      },
+      {
+        name: "Program 9-4",
+        desc: "Dictionary example to display all keys and values",
+        path: "ch09/p4da-program-9-4.py"
+      },
+      {
+        name: "Program 9-5",
+        desc: "Contacts as a dictionary of dictionary records",
+        path: "ch09/p4da-program-9-5.py"
+      },
+      {
+        name: "Program 9-6",
+        desc: "Contacts as a dictionary, with maintenance",
+        path: "ch09/p4da-program-9-6.py"
+      },
+      {
+        name: "Program 9-7",
+        desc: "Build a contacts set dynamically, from user input",
+        path: "ch09/p4da-program-9-7.py"
+      },
+      {
+        name: "Program 9-8",
+        desc: "Read a product file into a dictionary, keyed by product ID",
+        path: "ch09/p4da-program-9-8.py"
+      },
+    ]
+    },
+];
+
+    const menuDiv = document.getElementById("menu");
+    menuData.forEach((chapterData, index) => {
+      const chapEl = document.createElement("div");
+      chapEl.className = "chapter";
+
+      chapEl.innerHTML = `
+        <img src="${chapterData.icon}" alt="Icon">
+        <span>${chapterData.chapter}</span>
+      `;
+
+      const examplesEl = document.createElement("div");
+      examplesEl.className = "examples";
+
+      chapterData.examples.forEach(example => {
+        const exEl = document.createElement("div");
+        exEl.className = "example";
+        const url = `/?gh=${gituser}/${gitproject}/${gitbranch}/${example.path}&toviz=true`;
+        exEl.innerHTML = `<a href="${url}" target="_blank">${example.name}: ${example.desc}</a>`;
+        examplesEl.appendChild(exEl);
+      });
+
+      chapEl.addEventListener("click", () => {
+        examplesEl.style.display = examplesEl.style.display === "block" ? "none" : "block";
+      });
+
+      menuDiv.appendChild(chapEl);
+      menuDiv.appendChild(examplesEl);
+    });
+  </script>
+</body>
+</html>
