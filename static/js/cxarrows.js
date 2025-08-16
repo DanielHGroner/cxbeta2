@@ -12,9 +12,11 @@ adjustArrowLayerHeight();
 // Update on resize
 window.addEventListener("resize", adjustArrowLayerHeight);
 
-
+// Arrow between specific coordinates
+// TODO: migrate to options
+// enhanced to take optional parameter strokedashpattern (string of integers)
 class ArrowTurn {
-    constructor(x1, y1, x2, y2, colorv, colorh, text) {
+    constructor(x1, y1, x2, y2, colorv, colorh, text, strokedashpattern) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -22,13 +24,15 @@ class ArrowTurn {
         this.colorv = colorv;
         this.colorh = colorh;
         this.text = text;
+        this.strokedashpattern = strokedashpattern;
         this.visible = true;
+        //console.log('ArrowTurn.constructor: exiting:', this);
     }
 
     draw(svgElement) {
         if (this.visible) {
             // Create the vertical line
-            this.verticalLine = this.createLine(this.x1, this.y1, this.x1, this.y2, this.colorv, 2);
+            this.verticalLine = this.createLine(this.x1, this.y1, this.x1, this.y2, this.colorv, 2, this.strokedashpattern);
             svgElement.appendChild(this.verticalLine);
 
             // Create horizontal tail
@@ -38,7 +42,7 @@ class ArrowTurn {
             svgElement.appendChild(this.horizontalLine0);
 
             // Create the horizontal line
-            this.horizontalLine = this.createLine(this.x1, this.y2, this.x2, this.y2, this.colorh, 2);
+            this.horizontalLine = this.createLine(this.x1, this.y2, this.x2, this.y2, this.colorh, 2, this.strokedashpattern);
             svgElement.appendChild(this.horizontalLine);
 
             // Create the arrowhead
@@ -63,7 +67,7 @@ class ArrowTurn {
         }
     }
 
-    createLine(x1, y1, x2, y2, stroke, strokeWidth) {
+    createLine(x1, y1, x2, y2, stroke, strokeWidth, strokeDashPattern) {
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", x1);
         line.setAttribute("y1", y1);
@@ -71,6 +75,10 @@ class ArrowTurn {
         line.setAttribute("y2", y2);
         line.setAttribute("stroke", stroke);
         line.setAttribute("stroke-width", strokeWidth);
+        if (strokeDashPattern) {
+            //console.log('ArrowTurn.createLine: setAttribute: stroke-dasharray', strokeDashPattern)
+            line.setAttribute("stroke-dasharray", strokeDashPattern);
+        }
         return line;
     }
 
@@ -88,14 +96,18 @@ class ArrowTurn {
     }
 }
 
+// Arrow between 2 elements
+// TODO: migrate to options
+// enhanced to take optional parameter strokedashpattern (string of integers)
 class ArrowBetween {
-    constructor(elem1, elem2, x1, width, colorv, colorh, text) {
+    constructor(elem1, elem2, x1, width, colorv, colorh, text, strokedashpattern) {
         this.elem1 = elem1;
         this.elem2 = elem2;
         this.width = width;
         this.colorv = colorv;
         this.colorh = colorh;
         this.text = text;
+        this.strokedashpattern = strokedashpattern;
 
         const rect1 = elem1.getBoundingClientRect();
         const rect2 = elem2.getBoundingClientRect();
@@ -105,7 +117,7 @@ class ArrowBetween {
         const y2 = rect2.top + window.scrollY + rect2.height / 2;
         const x2 = x1 + width;
 
-        this.arrowTurn = new ArrowTurn(x1, y1, x2, y2, colorv, colorh, text);
+        this.arrowTurn = new ArrowTurn(x1, y1, x2, y2, colorv, colorh, text, strokedashpattern);
     }
 
     draw(svgElement) {

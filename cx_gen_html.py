@@ -179,7 +179,7 @@ def generate_variable_section(var_data):
 
     return "\n".join(lines)
 
-def generate_html(title, code_html, var_html, allhilites, allarrows):
+def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
     full_html = f"""<!DOCTYPE html>
 <html>
     <head>
@@ -236,7 +236,7 @@ def generate_html(title, code_html, var_html, allhilites, allarrows):
         <script src="static/js/cxhide.js"></script>
 
         <script src="static/js/cxarrows.js"></script>
-        <script src="static/js/cxarrowcb.js"></script>
+        <script src="static/js/cxarrowcbnew.js" defer></script>
 
         <script src="static/js/cxlinenums.js"></script>
 
@@ -245,6 +245,7 @@ def generate_html(title, code_html, var_html, allhilites, allarrows):
             const allhilite2 = {json.dumps(allhilites, indent=2)};
             const allhilite3 = {{ }};
             const allarrows = {json.dumps(allarrows, indent=2)};
+            const allflows = {json.dumps(allflows, indent=2)};
         </script>      
         <script>
             const lineNumbers = new LineNumbers('line-numbers-container', 'code', false, 'toggle-line-numbers');
@@ -266,10 +267,10 @@ def generate_html(title, code_html, var_html, allhilites, allarrows):
 </html>"""
     return full_html
 
-def cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows):
+def cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows):
     code_html_output = generate_code_section(tokens, stmt_list)
     var_html_output = generate_variable_section(var_actions)
-    html_output = generate_html(py_filename, code_html_output, var_html_output, allhilites, allarrows)
+    html_output = generate_html(py_filename, code_html_output, var_html_output, allhilites, allarrows, allflows)
     return html_output
 
 
@@ -288,8 +289,10 @@ if __name__ == '__main__':
     #print(allhilites)
     allarrows = load_json_file(f"{base}.allarrows.json")
     #print(allarrows)
+    allflows = load_json_file(f"{base}.flows_all.json")
+    #print(allflows)
 
-    html_output = cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows)
+    html_output = cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows)
 
     output_dir = os.path.join(os.path.dirname(base), "html")
     os.makedirs(output_dir, exist_ok=True)

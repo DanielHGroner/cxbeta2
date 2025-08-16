@@ -19,7 +19,6 @@ from cx_gen_flows_call import cx_gen_flows_call
 from cx_gen_flows_loopback import cx_gen_flows_loopback
 from cx_gen_flows_return_explicit import cx_gen_flows_return_explicit
 from cx_gen_flows_return_implicit import cx_gen_flows_return_implicit
-#from cx_gen_combine import cx_gen_combine
 from cx_gen_flows_return import cx_gen_flows_return
 from cx_gen_flows_endif import cx_gen_flows_endif
 from cx_gen_flows_loop import cx_gen_flows_loop
@@ -27,6 +26,7 @@ from cx_gen_flows_if import cx_gen_flows_if
 from cx_gen_flows_break import cx_gen_flows_break
 from cx_gen_allhilites import cx_gen_allhilites
 from cx_gen_allarrows import cx_gen_allarrows
+from cx_gen_flows_all import cx_gen_flows_all
 from cx_gen_html import cx_gen_html
 
 def print_status(name, items=None):
@@ -133,7 +133,18 @@ def cx_gen_src2html(source_code, filename='CodeXplorer'):
         flows_loop
     )
     print_status('allarrows', allarrows)
-    html_output = cx_gen_html(filename, tokens, stmts, actions_var, allhilites, allarrows)
+    allflows = cx_gen_flows_all(
+        flows_call,
+        flows_return,
+        flows_loopback,
+        flows_endif,
+        flows_break,
+        flows_if,
+        flows_loop
+    )
+    print_status('allflows', allflows)
+
+    html_output = cx_gen_html(filename, tokens, stmts, actions_var, allhilites, allarrows, allflows)
     print_status('html_output')
 
     return html_output
