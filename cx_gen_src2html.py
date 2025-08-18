@@ -27,14 +27,18 @@ from cx_gen_flows_break import cx_gen_flows_break
 from cx_gen_allhilites import cx_gen_allhilites
 from cx_gen_allarrows import cx_gen_allarrows
 from cx_gen_flows_all import cx_gen_flows_all
+from cx_gen_scopes import cx_gen_scopes
 from cx_gen_html import cx_gen_html
 
-def print_status(name, items=None):
+def print_status(name, items=None, drill=True):
     if isinstance(items, list):
         count = len(items)
         print(f'Generated {count} {name}.')
-    elif isinstance(items, dict):
+    elif isinstance(items, dict) and drill:
         count = sum(len(v) for v in items.values())
+        print(f'Generated {count} {name}.')
+    elif isinstance(items, dict):
+        count = len(items.keys())
         print(f'Generated {count} {name}.')
     else:
         print(f'Generated {name}.')
@@ -144,7 +148,12 @@ def cx_gen_src2html(source_code, filename='CodeXplorer'):
     )
     print_status('allflows', allflows)
 
-    html_output = cx_gen_html(filename, tokens, stmts, actions_var, allhilites, allarrows, allflows)
+    # new for scopes
+    allscopes = cx_gen_scopes(tree, stmts)
+    print_status('allscopes', allscopes, drill=False)
+    #print(allscopes)
+    
+    html_output = cx_gen_html(filename, tokens, stmts, actions_var, allhilites, allarrows, allflows, allscopes)
     print_status('html_output')
 
     return html_output

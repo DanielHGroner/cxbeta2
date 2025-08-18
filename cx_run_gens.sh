@@ -52,6 +52,9 @@ python cx_gen_flows_all.py "$SOURCE"
 
 python cx_gen_allhilites.py "$SOURCE"
 
+# New - generate scope info (defining statements for functions/classes/methods)
+python cx_gen_scopes.py "$SOURCE"
+
 # TODO: superceded by cx_gen_flows_all.py - can remove
 python cx_gen_allarrows.py "$SOURCE"
 

@@ -74,11 +74,18 @@ def generate_code_section(tokens, stmt_list):
     for tok in tokens:
         grouped_tokens.setdefault(tok["start"]["line"], []).append(tok)
 
+    # for wrapping physical lines, we need to track if there is an open (in-progress) multi-line statement
+    stmt_level = 0
+
     max_line = max(grouped_tokens.keys(), default=0)
     for line in range(1, max_line + 1):
         line_tokens = grouped_tokens.get(line, [])
         col = 0
         line_fragments = []
+
+        # new for wrapping each physical line
+        if stmt_level == 0:
+           line_fragments.append(f'<span class="cx_srcline" id="{line}s">')
 
         for tok in line_tokens:
             if not tok["text"]: # skip over empty tokens like DEDENT, EOF
@@ -91,6 +98,7 @@ def generate_code_section(tokens, stmt_list):
             if coord in stmt_map and stmt_map[coord].get("start"):
                 stmt_id = stmt_map[coord]["id"]
                 line_fragments.append(f'<span class="cx-statement cx-hilitable help-span" id="{stmt_id}">')
+                stmt_level += 1
 
             line_fragments.append(wrap_token(tok))
 
@@ -100,6 +108,13 @@ def generate_code_section(tokens, stmt_list):
             coord_end = (line, tok_end_col)
             if coord_end in stmt_map and stmt_map[coord_end].get("end"):
                 line_fragments.append('</span>')
+                stmt_level -=1
+
+        # new for wrapping each physical line
+        # the assumption is we want the \n to be inside the closing </span>, so just append the </span>
+        # also we can interupt a statement span in progress, so conditionally close line span if no open stmt span
+        if stmt_level == 0:
+            line_fragments.append('</span>')
 
         output_lines.append(''.join(line_fragments))
 
@@ -179,7 +194,7 @@ def generate_variable_section(var_data):
 
     return "\n".join(lines)
 
-def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
+def generate_html(title, code_html, var_html, allhilites, allarrows, allflows, allscopes):
     full_html = f"""<!DOCTYPE html>
 <html>
     <head>
@@ -191,6 +206,7 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
         <link rel="stylesheet" href="static/css/cxhilite.css">
         <link rel="stylesheet" href="static/css/cxlayout.css">
         <link rel="stylesheet" href="static/css/cxlinenums.css">
+        <link rel="stylesheet" href="static/css/cxcollapse.css">
     </head>
     <body>
         <header><span id="-title" class="help-span"><b>{title} - Static Visualizer</b></span></header>
@@ -218,6 +234,7 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
 </table></code>    
 </section>
 </div>
+<span id='-deselect' class='cx-hilitable help-span'></span>
 <svg id="svgElem"></svg>
         <footer id="footer">
             <!-- when ready, add back label below for show help-->
@@ -240,12 +257,17 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
 
         <script src="static/js/cxlinenums.js"></script>
 
+        <script src="static/js/cxcollapse.js" defer></script>
+
+        <script src="static/js/cxcentral.js"></script>
+        
         <script>
             let allhelp = {{ }};
             const allhilite2 = {json.dumps(allhilites, indent=2)};
             const allhilite3 = {{ }};
             const allarrows = {json.dumps(allarrows, indent=2)};
             const allflows = {json.dumps(allflows, indent=2)};
+            const allscopes = {json.dumps(allscopes, indent=2)};
         </script>      
         <script>
             const lineNumbers = new LineNumbers('line-numbers-container', 'code', false, 'toggle-line-numbers');
@@ -267,10 +289,10 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows):
 </html>"""
     return full_html
 
-def cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows):
+def cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes):
     code_html_output = generate_code_section(tokens, stmt_list)
     var_html_output = generate_variable_section(var_actions)
-    html_output = generate_html(py_filename, code_html_output, var_html_output, allhilites, allarrows, allflows)
+    html_output = generate_html(py_filename, code_html_output, var_html_output, allhilites, allarrows, allflows, allscopes)
     return html_output
 
 
@@ -291,8 +313,10 @@ if __name__ == '__main__':
     #print(allarrows)
     allflows = load_json_file(f"{base}.flows_all.json")
     #print(allflows)
+    allscopes = load_json_file(f"{base}.scopes.json")
+    #print(allscopes)
 
-    html_output = cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows)
+    html_output = cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes)
 
     output_dir = os.path.join(os.path.dirname(base), "html")
     os.makedirs(output_dir, exist_ok=True)

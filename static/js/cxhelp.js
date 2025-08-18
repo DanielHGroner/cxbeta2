@@ -1,3 +1,9 @@
+
+function clearHelp() {
+  helpContainer.innerHTML = '';
+  helpContainer.style.display = "none";
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const helpContainer = document.getElementById("help-container");
     const helpSpans = document.querySelectorAll(".help-span");
@@ -9,10 +15,21 @@ document.addEventListener("DOMContentLoaded", function() {
       //console.log(span);
       span.addEventListener("click", function() {
         const spanId = this.id;
-        const helpText = allhelp?.[spanId] || '-'; // for no help, mark as '-'
+        //const helpText = allhelp?.[spanId] || '-'; // for no help, mark as '-'
+        //console.log(spanId, helpText);
+        //if (helpText) {
+        //  showHelp(span, helpText);
+        //}
+        const helpText = allhelp?.[spanId];        // undefined if no help entry
         console.log(spanId, helpText);
-        if (helpText) {
+        if (!helpDisplaying) {                     // user turned help off
+          clearHelp();
+          return;
+        }
+        if (helpText && helpText !== '-') {        // only render real help
           showHelp(span, helpText);
+        } else {
+          clearHelp();                              // nothing for this span → hide
         }
       });
     });
@@ -20,11 +37,15 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function to display help text
     function showHelp(span, text) {
       console.log("in showHelp()")
-      helpContainer.innerHTML = text || "No help text available.";
-      if (helpDisplaying)
-         helpContainer.style.display = "block";
-      else
-         helpContainer.style.display = "none";
+      if (!helpDisplaying) { clearHelp(); return;}
+      if (!text || text === '-') { clearHelp(); return;}
+      ///helpContainer.innerHTML = text || "No help text available.";
+      ///if (helpDisplaying)
+      ///   helpContainer.style.display = "block";
+      ///else
+      ///  helpContainer.style.display = "none";
+      helpContainer.innerHTML = text;
+      helpContainer.style.display = "block";
 
       // ** initial placement of the help
       const spanRect = span.getBoundingClientRect();
@@ -46,10 +67,6 @@ document.addEventListener("DOMContentLoaded", function() {
       if (rect.right > viewportWidth) {
           helpContainer.style.left = `${viewportWidth - rect.width}px`;
       }
-      
-
-      // empty help
-      if (text == '-' || text == '') {helpContainer.style.display = "none";}
     }
   
     // Function to handle mouse down event on help container
