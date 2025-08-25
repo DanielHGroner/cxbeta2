@@ -134,23 +134,26 @@ def generate_help_choice_html():
             <span id="aihelp-status" style="margin-left: 1em; font-style: italic;"></span>
         </div>
 
-        <!-- Hidden Settings Row -->
+        <!-- Hidden Settings Row 1 -->
         <div id="ai-settings" class="inline-row" style="margin-top:1em; font-size: 80%;">
+            <label>Language:&nbsp;</label><input type="text" id="aihelp-language" value="english" style="margin-right: 1.5em;">
+
+            <label for="aihelp-apikeyInput" onclick="toggle_ai_settings2()">Gemini API Key:&nbsp;</label>
+            <input type="text" id="aihelp-apikeyInput" placeholder="Enter Gemini API Key" size="45" style="margin-right:5px" />
+            <button onclick="saveGeminiKey()" style="margin-right: 1.5em;">💾 Save Key</button>
+        </div>
+        <!-- Hidden Settings Row 2 -->
+        <div id="ai-settings2" class="inline-row" style="margin-top:1em; font-size: 80%; display: none">
             <label>Provider: 
-                <select id="aihelp-provider" style="margin-right: 1.5em;">
+                <select id="aihelp-provider">
                     <option value="gemini">gemini</option>
                     <option value="dummy">dummy</option>
                 </select>
             </label>
-
-            <label>Model:&nbsp;</label><input type="text" id="aihelp-modelName" value="gemini-2.5-flash-lite" style="margin-right: 1.5em;">
-            <label>Language:&nbsp;</label><input type="text" id="aihelp-language" value="english" style="margin-right: 1.5em;">
+            <label style="margin-left:1.5em;">Model:&nbsp;</label><input type="text" id="aihelp-modelName" value="gemini-2.5-flash-lite" style="margin-right: 1.5em;">
             <input type="checkbox" id="aihelp-includeLong" checked><label style="margin-right: 1.5em;">Long&nbsp;Help</label>
             <input type="checkbox" id="aihelp-dryrun"><label style="margin-right: 1.5em;">Dry&nbsp;Run</label>
-            <label>Help host:&nbsp;</label><input type="text" id="aihelp-host" value="DanielGroner.pythonanywhere.com" style="margin-right: 1.5em;">            
-            <label for="aihelp-apikeyInput">Gemini API Key:</label>
-            <input type="text" id="aihelp-apikeyInput" placeholder="Enter Gemini API Key" style="width: 300px;" />
-            <button onclick="saveGeminiKey()">💾 Save Key</button>
+            <label>Help host:&nbsp;</label><input type="text" id="aihelp-host" value="DanielGroner.pythonanywhere.com" size="34" style="margin-right: 1.5em;">            
         </div>
     """
 
@@ -221,7 +224,8 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows, a
 <br>
 <input type="checkbox" id="toggle-line-numbers" title="show/hide line numbers"><span id='toggle-line-numbers-text' style="margin-right:25px">Show Line #s</span> 
 <button id="copy-button" class='cx-button' style="margin-right:20px" title="copy code to clipboard">⧉ Copy to Clipboard</button>
-<button id="editCodeBtn" class='cx-button' >✏️ Edit Code&nbsp;&nbsp;</button>
+<button id="editCodeBtn" class='cx-button' style="margin-right:20px" >✏️ Edit Code&nbsp;&nbsp;</button>
+<button id="newCodeBtn" class='cx-button' >📄 New Code&nbsp;&nbsp;</button>
 <!--input type="checkbox" id="help-toggle" title="display help for CodeXplorer" checked-->
 {generate_help_choice_html()}
 </section>
@@ -280,11 +284,27 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows, a
             function toggleSettings() {{
                 const show = document.getElementById("showSettings").checked;
                 document.getElementById("ai-settings").style.display = show ? "flex" : "none";
+                if (!show) document.getElementById("ai-settings2").style.display = "none";
             }}
             window.onload = () => {{
                 toggleSettings();  // Will hide or show based on checkbox default
             }};
+            function toggle_ai_settings2() {{
+                console.log('In toggle_ai_settings2()');
+                elem = document.getElementById("ai-settings2");
+                if (elem.style.display == "none") elem.style.display = "flex";
+                else elem.style.display = "none";
+            }};
         </script>
+        <script defer>
+        document.getElementById('newCodeBtn').addEventListener('click', () => {{
+            // Optional safety net:
+            if (!confirm('Start a new program? This will clear the editor.')) return;
+            sessionStorage.setItem('cxSourceCode', '');   // blank program
+            window.location.href = '/';                   // go to editor (same tab), including access to sessionStorage
+        }});
+        </script>
+        
     </body>
 </html>"""
     return full_html

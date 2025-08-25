@@ -1,7 +1,10 @@
 
+let currentHelpSpan = null;  // To track current help span
+
 function clearHelp() {
   helpContainer.innerHTML = '';
   helpContainer.style.display = "none";
+  currentHelpSpan = null;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -15,11 +18,6 @@ document.addEventListener("DOMContentLoaded", function() {
       //console.log(span);
       span.addEventListener("click", function() {
         const spanId = this.id;
-        //const helpText = allhelp?.[spanId] || '-'; // for no help, mark as '-'
-        //console.log(spanId, helpText);
-        //if (helpText) {
-        //  showHelp(span, helpText);
-        //}
         const helpText = allhelp?.[spanId];        // undefined if no help entry
         console.log(spanId, helpText);
         if (!helpDisplaying) {                     // user turned help off
@@ -39,24 +37,19 @@ document.addEventListener("DOMContentLoaded", function() {
       console.log("in showHelp()")
       if (!helpDisplaying) { clearHelp(); return;}
       if (!text || text === '-') { clearHelp(); return;}
-      ///helpContainer.innerHTML = text || "No help text available.";
-      ///if (helpDisplaying)
-      ///   helpContainer.style.display = "block";
-      ///else
-      ///  helpContainer.style.display = "none";
       helpContainer.innerHTML = text;
       helpContainer.style.display = "block";
+      currentHelpSpan = span;
 
       // ** initial placement of the help
       const spanRect = span.getBoundingClientRect();
       
       // Calculate the position to place the help container next to the span
-      let leftOffset = spanRect.right + window.scrollY;
-      let topOffset = spanRect.bottom;
-      //console.log(leftOffset, topOffset);
+      let left = spanRect.right + window.scrollX;
+      let top = spanRect.bottom + window.scrollY;
 
-      helpContainer.style.left = `${leftOffset}px`;
-      helpContainer.style.top = `${topOffset}px`;
+      helpContainer.style.left = left + 'px';
+      helpContainer.style.top = top + 'px';
 
       // ** refine placement of the help, if needed
       // Get the bounding rectangle of the help box
@@ -89,23 +82,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Function to handle mouse up event
     document.addEventListener("mouseup", function() {
       isDragging = false;
-    });
-  
-    // superceeded by show/hide toggle feature
-    // Hide help container when clicked outside
-    /*
-    document.addEventListener("click", function(event) {
-      //console.log('clicked outside current statement')
-      let clickedSpan = false;
-      helpSpans.forEach(span => {
-        if (span.contains(event.target)) {
-          clickedSpan = true;
-        }
-      });
-  
-      if (!helpContainer.contains(event.target) && !clickedSpan) {
-        helpContainer.style.display = "none";
-      }
-    });*/
+    });  
   });
   

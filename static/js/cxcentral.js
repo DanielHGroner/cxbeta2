@@ -1,3 +1,4 @@
+// refresh all, e.g., from an expand/collpase
 function refreshAll(e) {
     console.log('in refreshAll', e);
 
@@ -41,4 +42,22 @@ function refreshAll(e) {
     currentHilited.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
 
     console.log('returning from refreshAll()')
+}
+
+// targeted refresh of displayed help
+function refreshHelp() {
+   // help is not displaying - short circuit exit
+   if (!helpDisplaying) return;
+
+   // there was no help dislpayed, BUT there is a hilited <span> - try to use that as potential help item
+   if (currentHelpSpan == null) {
+     if (currentHighlightedSpan !== null) {
+       currentHelpSpan = currentHighlightedSpan;
+     } else {
+        return;
+     }
+   }
+
+   // similiate mouse click to refresh the help text
+   currentHelpSpan.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
 }

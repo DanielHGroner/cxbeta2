@@ -38,6 +38,7 @@
             console.log("returned from convertAiHelpDataToAllHelp; allhelp=", allhelp);
 
             //document.getElementById("parsed").textContent = JSON.stringify(allhelp, null, 2);
+            refreshHelp();
 
             aihelp_status.textContent = "✔️ Help loaded";
 

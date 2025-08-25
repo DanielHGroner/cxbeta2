@@ -24,25 +24,13 @@
     }
     #controls {margin-left: 50px;}
   </style>
-
   <link rel="stylesheet" href="static/css/cxlayout.css">
   <script defer src="static/js/cxghurl.js"></script>
-
-<!-- CodeMirror 5 core CSS/JS + Python mode -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.20/lib/codemirror.min.css">
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.20/lib/codemirror.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.20/mode/python/python.min.js"></script>
-<style>
-  /* CodeMirror sizing to match prior textarea */
-  .CodeMirror { height: 400px; font-size: 14px; }
-</style>
-  <link rel="stylesheet" href="static/css/cxcodemirror.css">
-
 </head>
 <body>
   <h4 style="text-align:left;margin-left: 50px;">CodeXplorer – Source Code Entry</h4>
   <div class="cx-code-container">
-     <textarea id="codeInput" data-role="code" placeholder="Enter Python code here..." wrap="off"></textarea><br>
+     <textarea id="codeInput" data-role="code" placeholder="Enter Python code here..."></textarea><br>
   </div>
   <div id="controls">
      <button id="loadFileBtn">📂 Load File</button>
@@ -58,8 +46,6 @@
         <a href="static/docs/cx-help.pdf" target="_blank" title="display Overview for CodeXplorer">Overview</a>
     </footer>
 
-<script src="/static/js/cxcodemirror.js"></script>
-
 <script>
 let lastGenerationSuccessful = false;
 
@@ -68,8 +54,6 @@ document.getElementById("codeInput").addEventListener("keyup", () => {
     document.getElementById("status").textContent = "";
     document.getElementById("errors").textContent = "";
     lastGenerationSuccessful = false;
-    // Also clear any error highlights as the user starts fixing things (this doesn't work)
-    //if (_errMarks.length) clearErrorMarks();
   }
 });
 
@@ -92,11 +76,9 @@ async function visualizeIfValid(code, auto = false) {
 
     if (!checkResult.valid) {
       statusDiv.textContent = "❌ Errors";
-      clearErrorMarks();
       checkResult.errors.forEach(err => {
         const lineInfo = err.line !== null ? `Line ${err.line}: ` : "";
         errorsDiv.textContent += lineInfo + err.message + "\n";
-        if (err.line != null) markErrorLine(err.line);     // <— highlight in editor
       });
       return;
     }
@@ -167,16 +149,14 @@ document.getElementById('loadFileBtn').onclick = () => {
 };
 
 document.getElementById('fileInput').addEventListener('change', (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    // ev.target is the FileReader; result is your file text
-    const text = ev.target.result;
-    setCode(text);               // <-- update CodeMirror + textarea + fire 'input'
-  };
-  reader.readAsText(file);
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      document.getElementById('codeInput').value = event.target.result;
+    };
+    reader.readAsText(file);
+  }
 });
 </script>
 

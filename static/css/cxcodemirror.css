@@ -1,0 +1,59 @@
+
+/* Plain theme base */
+.cm-s-plain.CodeMirror {
+  background: #fff;
+  color: #000; /* base text color */
+}
+
+/* Force ALL token spans plain black, neutral weight/style */
+.cm-s-plain .CodeMirror-line span[class*="cm-"] {
+  color: #000 !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+}
+
+/* Exception 1: comments -> gray */
+.cm-s-plain .CodeMirror-line span.cm-comment {
+  color: #6a737d !important;
+}
+
+/* Exception 2: keywords -> bold black */
+.cm-s-plain .CodeMirror-line span.cm-keyword {
+  font-weight: 700 !important;
+  color: #000 !important;
+}
+
+/* Ensure builtins (e.g., print, len) don't pick up theme colors */
+.cm-s-plain .CodeMirror-line span.cm-builtin {
+  color: #000 !important;
+  font-weight: normal !important;
+}
+
+/* Gutter look */
+.cm-s-plain .CodeMirror-gutters {
+  background: #f7f7f7;
+  border-right: 1px solid #e2e2e2;
+}
+.cm-s-plain .CodeMirror-linenumber { color: #888; }
+
+/* error-related *//* Error background (optional but helpful) */
+.cm-s-plain .cm-error-line {
+  background: #ffe7e7; /* soft red */
+}
+
+/* Make the line number for error lines red + bold.
+   Target both possible elements to be safe across CM builds. */
+.cm-s-plain .CodeMirror-linenumber.cm-error-lnum,
+.cm-s-plain .CodeMirror-gutter-elt.cm-error-lnum {
+  color: #d00000 !important;
+  font-weight: 700;
+}
+
+/* Turn the line number red/bold when the line's GUTTER WRAPPER has cm-error-lnum */
+.cm-s-plain .CodeMirror-gutter-wrapper.cm-error-lnum .CodeMirror-linenumber,
+.cm-s-plain .CodeMirror-gutter-elt.cm-error-lnum,
+.cm-s-plain .CodeMirror-linenumber.cm-error-lnum {
+  color: #d00000 !important;
+  font-weight: 700 !important;
+}
