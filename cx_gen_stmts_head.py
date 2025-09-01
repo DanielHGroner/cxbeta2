@@ -2,10 +2,39 @@ import sys
 from cx_utils import read_source_file, derive_filename, write_json_file, load_json_file, get_token_stream
 import tokenize
 
+#def find_colon_after_start(tokens, start_line, start_col):
+#    for tok in tokens:
+#        if tok.start[0] == start_line and tok.start[1] >= start_col:
+#            if tok.type == tokenize.OP and tok.string == ":":
+#                return {"line": tok.start[0], "col": tok.start[1]}
+#    return None
+# revised 8/31/25 to replace above, to handle multi-line signatures
 def find_colon_after_start(tokens, start_line, start_col):
+    """Return (line,col) of the header-terminating ':' after (start_line,start_col).
+    Handles multi-line headers and ignores colons inside (), [], {}."""
+    started = False
+    depth = 0  # bracket depth across () [] {}
     for tok in tokens:
-        if tok.start[0] == start_line and tok.start[1] >= start_col:
-            if tok.type == tokenize.OP and tok.string == ":":
+        # wait until we reach the starting position
+        if not started:
+            if tok.start < (start_line, start_col):
+                continue
+            started = True
+        tt, ts = tok.type, tok.string
+        # skip non-structural tokens
+        if tt in (tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT, tokenize.COMMENT):
+            continue
+        if tt == tokenize.STRING:
+            continue
+        if tt == tokenize.OP:
+            if ts in "([{":
+                depth += 1
+                continue
+            if ts in ")]}":
+                if depth > 0:
+                    depth -= 1
+                continue
+            if ts == ":" and depth == 0:
                 return {"line": tok.start[0], "col": tok.start[1]}
     return None
 

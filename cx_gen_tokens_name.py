@@ -38,6 +38,24 @@ class NameClassifier(ast.NodeVisitor):
     def __init__(self, token_lookup):
         self.token_lookup = token_lookup
 
+    # added 8/31/25 - to support correct function/method name finding
+    def _mark_by_pos(self, lineno, col, name_text, type_name):
+        """Tag the NAME token at an exact (line, col) occurrence. If the exact key
+        isn't present, fall back to the nearest NAME with the same text on that
+        line at or after `col`."""
+        tok = self.token_lookup.get((lineno, col))
+        if tok and tok.get('text') == name_text:
+            tok['type_name'] = type_name
+            return True
+        # Fallback: same line, matching text, nearest col >= given col
+        candidates = [((l, c), t) for (l, c), t in self.token_lookup.items()
+                      if l == lineno and t.get('text') == name_text and c >= col]
+        if candidates:
+            (_, _c), t = min(candidates, key=lambda x: x[0][1])
+            t['type_name'] = type_name
+            return True
+        return False
+
     def _mark_by_text(self, lineno, name_text, type_name):
         for (line, col), token in self.token_lookup.items():
             if line == lineno and token.get('text') == name_text:
@@ -61,15 +79,28 @@ class NameClassifier(ast.NodeVisitor):
     def visit_Call(self, node):
         func = node.func
         if isinstance(func, ast.Name):
-            self._mark_by_text(func.lineno, func.id, 'function_call')
+            # self._mark_by_text(func.lineno, func.id, 'function_call')
+            # Tag the specific occurrence (fixes multiple calls on one line)
+            self._mark_by_pos(func.lineno, func.col_offset, func.id, 'function_call')
         elif isinstance(func, ast.Attribute):
             if hasattr(func, 'attr_node'):
-                self._mark_by_text(func.attr_node.lineno, func.attr_node.id, 'function_call')
+                #self._mark_by_text(func.attr_node.lineno, func.attr_node.id, 'function_call')
+                # fix 8/31/25 - identify method name
+                self._mark_by_pos(func.attr_node.lineno, func.attr_node.col_offset, func.attr_node.id, 'function_call')
         self.generic_visit(node)
 
+    #def visit_Attribute(self, node):
+    #    if hasattr(node, 'attr_node'):
+    #        self._mark_by_text(node.attr_node.lineno, node.attr_node.id, 'attribute')
+    #    self.generic_visit(node)
+    # fix 8/31/25 - for method name finding
     def visit_Attribute(self, node):
         if hasattr(node, 'attr_node'):
-            self._mark_by_text(node.attr_node.lineno, node.attr_node.id, 'attribute')
+            key = (node.attr_node.lineno, node.attr_node.col_offset)
+            tok = self.token_lookup.get(key)
+            # Only tag as 'attribute' if nothing else (like 'function_call') has been set.
+            if tok and 'type_name' not in tok:
+                tok['type_name'] = 'attribute'
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node):
@@ -97,10 +128,24 @@ class NameClassifier(ast.NodeVisitor):
             self.token_lookup[key]['type_name'] = 'variable'
         self.generic_visit(node)
 
+#def enrich_ast_nodes(tree):
+#    for node in ast.walk(tree):
+#        if isinstance(node, ast.Attribute):
+#            node.attr_node = ast.Name(id=node.attr, ctx=node.ctx, lineno=node.lineno, col_offset=node.col_offset)
+# fix 8/31/25 - correct function/method name finding
 def enrich_ast_nodes(tree):
     for node in ast.walk(tree):
         if isinstance(node, ast.Attribute):
             node.attr_node = ast.Name(id=node.attr, ctx=node.ctx, lineno=node.lineno, col_offset=node.col_offset)
+            # Compute the start of the attribute identifier
+            line = getattr(node, 'end_lineno', node.lineno)
+            col  = getattr(node, 'end_col_offset', node.col_offset) - len(node.attr)
+            node.attr_node = ast.Name(
+                id=node.attr,
+                ctx=ast.Load(),
+                lineno=line,
+                col_offset=col,
+            )
 
 # augment the NAME tokens with their type (via utility functions and ast tree walk)
 def cx_gen_tokens_name(tokens, ast_tree):

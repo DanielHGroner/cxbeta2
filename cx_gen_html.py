@@ -50,8 +50,11 @@ def wrap_token(tok):
     text = escape_html(tok["text"])
     cls = get_token_class(tok)
     if cls:
-        return f'<span class="{cls}">{text}</span>'
-    return text
+        result =  f'<span class="{cls}">{text}</span>'
+    else:
+        result = text
+    #print("wrap_token():", result)
+    return result
 
 
 def build_statement_map(stmt_list):
@@ -68,6 +71,7 @@ def build_statement_map(stmt_list):
 
 def generate_code_section(tokens, stmt_list):
     stmt_map = build_statement_map(stmt_list)
+    #print(stmt_map)
     output_lines = []
 
     grouped_tokens = {}
@@ -105,11 +109,23 @@ def generate_code_section(tokens, stmt_list):
             tok_end_col = tok["end"]["col"]
             col = tok_end_col
 
+            # are we at the end of a statement? If so, close the statement span
             coord_end = (line, tok_end_col)
+            #print('coord_end', coord_end)
             if coord_end in stmt_map and stmt_map[coord_end].get("end"):
                 line_fragments.append('</span>')
                 stmt_level -=1
 
+            # 9/1/25 multi-line string is a special case for end of statement
+            elif tok['type'] == 'STRING' and tok['start']['line'] != tok['end']['line']:
+               #print('found multi-line string')
+               end_coord = (tok['end']['line'], tok['end']['col'])
+               end_info = stmt_map.get(end_coord)
+               if end_info and end_info.get('end'):
+                   line_fragments.append('</span>')
+                   stmt_level -=1
+
+        # TODO - do we need to omit these for multi-line string case?
         # new for wrapping each physical line
         # the assumption is we want the \n to be inside the closing </span>, so just append the </span>
         # also we can interupt a statement span in progress, so conditionally close line span if no open stmt span
