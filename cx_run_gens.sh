@@ -21,6 +21,7 @@ echo "Running generators for $SOURCE..."
 
 python cx_gen_tokens_core.py "$SOURCE"
 python cx_gen_tokens_name.py "$SOURCE"
+python cx_gen_tokens_bs.py "$SOURCE"
 
 python cx_gen_stmts_real.py "$SOURCE"
 python cx_gen_stmts_synth.py "$SOURCE"

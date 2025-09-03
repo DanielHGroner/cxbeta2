@@ -9,6 +9,7 @@ from cx_cfg6 import CFGManager
 # Import top-level functions from each generator
 from cx_gen_tokens_core import cx_gen_tokens_core
 from cx_gen_tokens_name import cx_gen_tokens_name
+from cx_gen_tokens_bs import cx_gen_tokens_bs
 from cx_gen_stmts_real import cx_gen_stmts_real
 from cx_gen_stmts_synth import cx_gen_stmts_synth
 from cx_gen_stmts_head import cx_gen_stmts_head
@@ -84,6 +85,7 @@ def cx_gen_src2html(source_code, filename='CodeXplorer'):
     print_status('tokens_core', tokens_core)
     tokens = cx_gen_tokens_name(tokens_core, tree)
     print_status('tokens_name', tokens)
+    tokens_bs = cx_gen_tokens_bs(source_code)
 
     # === Statements ===
     stmts_real = cx_gen_stmts_real(tree)
@@ -153,7 +155,7 @@ def cx_gen_src2html(source_code, filename='CodeXplorer'):
     print_status('allscopes', allscopes, drill=False)
     #print(allscopes)
     
-    html_output = cx_gen_html(filename, tokens, stmts, actions_var, allhilites, allarrows, allflows, allscopes)
+    html_output = cx_gen_html(filename, tokens, tokens_bs, stmts, actions_var, allhilites, allarrows, allflows, allscopes)
     print_status('html_output')
 
     return html_output

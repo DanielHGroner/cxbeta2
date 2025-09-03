@@ -35,7 +35,7 @@ def find_colon_after_start(tokens, start_line, start_col):
                     depth -= 1
                 continue
             if ts == ":" and depth == 0:
-                return {"line": tok.start[0], "col": tok.start[1]}
+                return {"line": tok.start[0], "col": tok.start[1]+1} # patch 9/3/25 - +1 , sto include the colon in stmt span
     return None
 
 def cx_gen_stmts_head(tokens, stmt_real, stmt_synth):

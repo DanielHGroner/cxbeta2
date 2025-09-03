@@ -68,8 +68,11 @@ def build_statement_map(stmt_list):
         stmt_map[end] = {"id": stmt_id, "end": True}
     return stmt_map
 
-
-def generate_code_section(tokens, stmt_list):
+def generate_code_section(tokens, tokens_bs, stmt_list):
+    # convert \ list into dict of line #s and pre-\ text
+    bs_by_line = {it["line"]: it["pre_ws"] for it in tokens_bs}
+    #print(tokens_bs)
+    #print(bs_by_line)
     stmt_map = build_statement_map(stmt_list)
     #print(stmt_map)
     output_lines = []
@@ -88,6 +91,7 @@ def generate_code_section(tokens, stmt_list):
         line_fragments = []
 
         # new for wrapping each physical line
+        # TODO - do we need to omit these related to multi-line cases (multi-line string, \)
         if stmt_level == 0:
            line_fragments.append(f'<span class="cx_srcline" id="{line}s">')
 
@@ -125,12 +129,18 @@ def generate_code_section(tokens, stmt_list):
                    line_fragments.append('</span>')
                    stmt_level -=1
 
-        # TODO - do we need to omit these for multi-line string case?
+        # new 9/2/25 - inject \ if there's one for this line
+        if line in bs_by_line:
+            line_fragments.append(bs_by_line[line]+'\\\n')
+
+        # TODO - do we need to omit these for multi-line string case (multi-line string, \)? and see above for opening <span>
         # new for wrapping each physical line
         # the assumption is we want the \n to be inside the closing </span>, so just append the </span>
         # also we can interupt a statement span in progress, so conditionally close line span if no open stmt span
         if stmt_level == 0:
             line_fragments.append('</span>')
+
+        #print('line:', line, '; stmt_level:', stmt_level)
 
         output_lines.append(''.join(line_fragments))
 
@@ -325,8 +335,8 @@ def generate_html(title, code_html, var_html, allhilites, allarrows, allflows, a
 </html>"""
     return full_html
 
-def cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes):
-    code_html_output = generate_code_section(tokens, stmt_list)
+def cx_gen_html(py_filename, tokens, tokens_bs, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes):
+    code_html_output = generate_code_section(tokens, tokens_bs, stmt_list)
     var_html_output = generate_variable_section(var_actions)
     html_output = generate_html(py_filename, code_html_output, var_html_output, allhilites, allarrows, allflows, allscopes)
     return html_output
@@ -341,6 +351,7 @@ if __name__ == '__main__':
     base = derive_basename(py_filename)
 
     tokens = load_json_file(f"{base}.tokens.json")
+    tokens_bs = load_json_file(f"{base}.tokens_bs.json")
     stmt_list = load_json_file(f"{base}.stmts.json")
     var_actions = load_json_file(f"{base}.actions_var.json")
     allhilites = load_json_file(f"{base}.allhilites.json")
@@ -352,7 +363,7 @@ if __name__ == '__main__':
     allscopes = load_json_file(f"{base}.scopes.json")
     #print(allscopes)
 
-    html_output = cx_gen_html(py_filename, tokens, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes)
+    html_output = cx_gen_html(py_filename, tokens, tokens_bs, stmt_list, var_actions, allhilites, allarrows, allflows, allscopes)
 
     output_dir = os.path.join(os.path.dirname(base), "html")
     os.makedirs(output_dir, exist_ok=True)
