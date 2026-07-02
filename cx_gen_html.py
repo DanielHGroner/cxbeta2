@@ -176,7 +176,7 @@ def generate_help_choice_html():
                     <option value="dummy">dummy</option>
                 </select>
             </label>
-            <label style="margin-left:1.5em;">Model:&nbsp;</label><input type="text" id="aihelp-modelName" value="gemini-2.5-flash-lite" style="margin-right: 1.5em;">
+            <label style="margin-left:1.5em;">Model:&nbsp;</label><input type="text" id="aihelp-modelName" value="gemini-3.1-flash-lite" style="margin-right: 1.5em;">
             <input type="checkbox" id="aihelp-includeLong" checked><label style="margin-right: 1.5em;">Long&nbsp;Help</label>
             <input type="checkbox" id="aihelp-dryrun"><label style="margin-right: 1.5em;">Dry&nbsp;Run</label>
             <label>Help host:&nbsp;</label><input type="text" id="aihelp-host" value="DanielGroner.pythonanywhere.com" size="34" style="margin-right: 1.5em;">            
