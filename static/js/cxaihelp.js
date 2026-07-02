@@ -29,7 +29,7 @@ async function requestAiHelp(sourceCode, options = {}, baseUrl = getDefaultAiHel
         source: sourceCode,
         options: {
             apiProvider: options.apiProvider || "dummy",
-            modelName: options.modelName || "gemini-2.5-flash-lite",
+            modelName: options.modelName || "gemini-3.1-flash-lite",
             includeLong: options.includeLong !== false,
             spokenLanguage: options.spokenLanguage || "english",
             dryrun: options.dryrun === true,
