@@ -6,8 +6,8 @@ function getDefaultAiHelpBaseUrl() {
   //if (hostname === "localhost" || hostname === "127.0.0.1") {
   //  return "http://localhost:5001/aihelp";
   //} else {
-    //return "https://DanielGroner.pythonanywhere.com/aihelp";
-    const base = document.getElementById('aihelp-host')?.value || "DanielGroner.pythonanywhere.com";
+    //return "https://cxai.onrender.com/aihelp";
+    const base = document.getElementById('aihelp-host')?.value || "cxai.onrender.com";
     if (base.includes("localhost")) {
        var url = "http://" + base + "/aihelp";
     } else {
