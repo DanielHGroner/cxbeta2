@@ -7,7 +7,7 @@
         // review/adjust each id
         const options = {
             apiProvider: document.getElementById('aihelp-provider')?.value || "dummy",
-            modelName: document.getElementById('aihelp-modelName')?.value || "gemini-3.1-flash-lite",
+            modelName: document.getElementById('aihelp-modelName')?.value ,
             includeLong: document.getElementById('aihelp-includeLong')?.checked,
             spokenLanguage: document.getElementById('aihelp-language')?.value || "english",
             dryrun: document.getElementById('aihelp-dryrun')?.checked ?? true,
